@@ -57,16 +57,9 @@ public class RobotContainer {
             () -> m_robotDrive.drive(
                 -MathUtil.applyDeadband(m_driverController.getY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getZ(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getRawAxis(Joystick.AxisType.kZ.value), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
-
-        
-        new JoystickButton(m_driverController, Joystick.AxisType.kZ.value)
-        .whileTrue(new RunCommand(() -> {
-        double rotation = m_driverController.getRawAxis(Joystick.AxisType.kZ.value);
-        m_robotDrive.rotate(rotation);
-        }, m_robotDrive));
 
   }
 
