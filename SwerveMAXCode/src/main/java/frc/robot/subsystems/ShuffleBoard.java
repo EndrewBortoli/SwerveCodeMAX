@@ -22,8 +22,8 @@ public class ShuffleBoard extends SubsystemBase {
             //-------------Ângulo X do Robo-------------\\
         public void actualYaw() {  
 
-                var yawSignal = m_robotDrive.getHeading(); 
-                yawEntry.setDouble(yawSignal);
+                // var yawSignal = m_robotDrive.getHeading(); 
+                // yawEntry.setDouble(yawSignal);
                 
 }
 }

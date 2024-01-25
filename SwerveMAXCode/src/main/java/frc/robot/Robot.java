@@ -23,10 +23,10 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private DriveSubsystem m_robotDrive;
 
-  private static final Pigeon2 m_gyro = new Pigeon2(7);
-  public void zeroHeading() {
-    m_gyro.reset();
-  }
+   private static final Pigeon2 m_gyro = new Pigeon2(7);
+   public void zeroHeading() {
+     m_gyro.reset();
+   }
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    zeroHeading();
+     zeroHeading();
     
   }
 
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",

@@ -46,7 +46,7 @@ public class DriveSubsystem extends SubsystemBase {
       false);
 
   // The gyro sensor
-  private final Pigeon2 m_gyro = new Pigeon2(7);
+  private final static Pigeon2 m_gyro = new Pigeon2(7);
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -57,7 +57,7 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
-  // Odometry class for tracking robot pose
+  // // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
       Rotation2d.fromDegrees(m_gyro.getAngle()),
@@ -70,6 +70,16 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+        zeroHeading();
+      } catch (Exception e){
+
+      }
+    }).start();
+
   }
 
   @Override
@@ -90,9 +100,9 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @return The pose.
    */
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
-  }
+  // public Pose2d getPose() {
+  //   return m_odometry.getPoseMeters();
+  // }
 
   /**
    * Resets the odometry to the specified pose.
@@ -181,14 +191,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(m_gyro.getAngle()))
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getHeading()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     
     // Adicione esta linha para corrigir a orientação dos módulos
     // swerveModuleStates = SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     
-    // ... (código anterior)
-
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -200,10 +208,10 @@ public class DriveSubsystem extends SubsystemBase {
    * Sets the wheels into an X formation to prevent movement.
    */
   public void setX() {
-    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
-    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-    m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-    m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+    m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+    m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
   }
 
   /**
@@ -250,16 +258,22 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @return the robot's heading in degrees, from -180 to 180
    */
-  public double getHeading() {
-    return Rotation2d.fromDegrees(m_gyro.getAngle()).getDegrees();
+   public double getHeading() {
+    return Math.IEEEremainder(m_gyro.getAngle(), 360);
   }
+
+  // private double getPigeonHeading() {
+  //   double[] ypr = new double[3];
+  //   m_gyro.getYawPitchRoll(ypr);
+  //   return ypr[0]; // O índice 0 contém o ângulo de guinada (yaw)
+  // }
 
   /**
    * Returns the turn rate of the robot.
    *
    * @return The turn rate of the robot, in degrees per second
    */
-  public double getTurnRate() {
-    return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-  }
+  // public double getTurnRate() {
+  //   return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  // }
 }
